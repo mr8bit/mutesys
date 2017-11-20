@@ -4,7 +4,7 @@ from channels import Channel
 from channels.auth import channel_session_user_from_http, channel_session_user
 
 from .exceptions import ClientError
-from .models import Room
+from .models import Room, QA
 from .settings import MSG_TYPE_LEAVE, MSG_TYPE_ENTER, NOTIFY_USERS_ON_ENTER_OR_LEAVE_ROOMS
 from .utils import get_room_or_error, catch_client_error
 
@@ -17,7 +17,6 @@ from .utils import get_room_or_error, catch_client_error
 # in all consumers with the same reply_channel, so all three here)
 @channel_session_user_from_http
 def ws_connect(message):
-    print(message.user)
     message.reply_channel.send({'accept': True})
     # Initialise their session
     message.channel_session['rooms'] = []
@@ -114,3 +113,19 @@ def chat_send(message):
     room = Room.objects.get(pk=message["room"])
     # Send the message along
     room.send_message(message["message"], "Лектор")
+
+
+@channel_session_user
+@catch_client_error
+def qa_send(message):
+    # Check that the user in the room
+    if int(message['room']) not in message.channel_session['rooms']:
+        raise ClientError("ROOM_ACCESS_DENIED")
+    # Find the room they're sending to, check perms
+    room = Room.objects.get(pk=message["room"])
+    qa = QA.objects.create(name=message["message"])
+    qa.save()
+    print(message["message"])
+    print(room.id)
+    # Send the message along
+    qa.send_qa(message["message"], "Лектор")

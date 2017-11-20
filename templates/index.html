@@ -13,9 +13,7 @@
             </p>
         {% endfor %}
     </ul>
-    <div id="my_id">
 
-    </div>
     <div id="chats">
     </div>
 
@@ -24,8 +22,8 @@
 
 {% block extra_body %}
     <script>
-        $(function () {
 
+        $(function () {
             // Correctly decide between ws:// and wss://
             var ws_path = "/chat/stream/";
             console.log("Connecting to " + ws_path);
@@ -40,6 +38,7 @@
                     alert(data.error);
                     return;
                 }
+                console.log(data);
                 // Handle joining
                 if (data.join) {
                     console.log("Joining room " + data.join);
@@ -48,12 +47,16 @@
                         "<h2>" + data.title + "</h2>" +
                         "<div class='messages'></div>" +
                         "<form><input><button>Send</button></form>" +
-                        "</div>"
+                        "</div>" +
+                        "<div class='room' id='qa_room-" + data.join + "'>" +
+                        "<h2> Вопросы </h2>" +
+                        "<div class='qa'></div>" +
+                        "<form><input><button>Send QA</button></form>" + "</div>"
                     );
                     // Hook up send button to send a message
                     roomdiv.find("form").on("submit", function () {
                         webSocketBridge.send({
-                            "command": "send",
+                            "command": "qa_send",
                             "room": data.join,
                             "message": roomdiv.find("input").val()
                         });
@@ -69,6 +72,14 @@
                 } else if (data.message || data.msg_type != 0) {
                     var msgdiv = $("#room-" + data.room + " .messages");
                     var ok_msg = "";
+                    if (data.msg_type == 2) {
+                        var msgqa = $("#qa_room-" + data.room + " .qa");
+                        ok_msg = "<div class='contextual-message text-warning'>" + data.message +
+                                "</div>";
+                        msgqa.append(ok_msg);
+                        return;
+
+                    }
                     // msg types are defined in chat/settings.py
                     // Only for demo purposes is hardcoded, in production scenarios, consider call a service.
                     switch (data.msg_type) {
