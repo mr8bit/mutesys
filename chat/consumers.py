@@ -128,4 +128,19 @@ def qa_send(message):
     print(message["message"])
     print(room.id)
     # Send the message along
+    qa.send_qa(message["message"], "Лектор",2)
+
+@channel_session_user
+@catch_client_error
+def qa_answer(message):
+    # Check that the user in the room
+    if int(message['room']) not in message.channel_session['rooms']:
+        raise ClientError("ROOM_ACCESS_DENIED")
+    # Find the room they're sending to, check perms
+    room = Room.objects.get(pk=message["room"])
+    qa = QA.objects.create(name=message["message"])
+    qa.save()
+    print(message["message"])
+    print(room.id)
+    # Send the message along
     qa.send_qa(message["message"], "Лектор")

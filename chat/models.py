@@ -61,7 +61,7 @@ class QA(models.Model):
         """
         Called to send a message to the room on behalf of a user.
         """
-        final_msg = {'room': self.group_id, 'message': message, 'username': user, 'msg_type': 2}
+        final_msg = {'room': self.group_id, 'message': message, 'username': user, 'msg_type': msg_type}
 
         # Send out the message to everyone in the room
         self.websocket_group.send(

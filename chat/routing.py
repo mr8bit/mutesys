@@ -26,4 +26,5 @@ custom_routing = [
     route("chat.receive", chat_leave, command="^leave$"),
     route("chat.receive", chat_send, command="^send$"),
     route("chat.receive", qa_send, command="^qa_send$"),
+    route("chat.receive", qa_answer, command="^qa_answer$"),
 ]
