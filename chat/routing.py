@@ -1,5 +1,5 @@
 from channels import route
-from .consumers import ws_connect, ws_receive, ws_disconnect, chat_join, chat_leave, chat_send, qa_send
+from .consumers import ws_connect, ws_receive, ws_disconnect, chat_join, chat_leave, chat_send, qa_send, qa_answer
 
 
 # There's no path matching on these routes; we just rely on the matching
