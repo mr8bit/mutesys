@@ -125,10 +125,10 @@ def qa_send(message):
     room = Room.objects.get(pk=message["room"])
     qa = QA.objects.create(name=message["message"])
     qa.save()
-    print(message["message"])
-    print(room.id)
+    user = message["username"]
+
     # Send the message along
-    qa.send_qa(message["message"], "Лектор",2)
+    qa.send_qa(message["message"], user,2)
 
 @channel_session_user
 @catch_client_error
@@ -140,7 +140,6 @@ def qa_answer(message):
     room = Room.objects.get(pk=message["room"])
     qa = QA.objects.create(name=message["message"])
     qa.save()
-    print(message["message"])
-    print(room.id)
+    user = message["username"]
     # Send the message along
-    qa.send_qa(message["message"], "Лектор")
+    qa.send_qa(message["message"], user)
